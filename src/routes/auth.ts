@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { RegisterUser } from "../validations/auth.validations";
+import AuthServices from "../services/auth.services";
 
 const router = Router();
 
@@ -17,21 +18,21 @@ router.post("/login", (req: Request, res: Response) => {
   res.send({ message: "login" });
 });
 
-router.post("/register", (req: Request, res: Response) => {
+router.post("/register", async (req: Request, res: Response) => {
+  const authServices = new AuthServices();
+
   const validate = RegisterUser.safeParse(req.body);
 
   if (validate.success) {
-    const userExists = user.find((u) => u.email === validate.data.email);
-
-    if (userExists) {
-      return res.status(422).json({ error: "User already exists" });
-    }
-
-    user.push(validate.data);
+    const newUser = await authServices.register(
+      validate.data.email,
+      validate.data.password,
+      validate.data.name,
+    );
 
     return res
-      .status(200)
-      .json({ message: "User registered successfully", user });
+      .status(201)
+      .json({ message: "User registered successfully", user: newUser });
   } else {
     return res.status(400).json({ error: validate.error });
   }
