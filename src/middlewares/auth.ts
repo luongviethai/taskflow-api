@@ -1,12 +1,51 @@
-import { NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { config } from "../config/env";
 
-export const requireAuth = (
+interface JwtPayload {
+  userId: number;
+  iat: number;
+  exp: number;
+}
+
+export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    
+  const authHeader = req.headers.authorization;
 
-  } catch (error) {}
+  if (!authHeader) {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const parts = authHeader?.split(" ");
+
+  if (!parts || parts.length !== 2 || parts[0] !== "Bearer") {
+    res
+      .status(401)
+      .json({ error: "Invalid token format. Expected: Bearer <token>" });
+    return;
+  }
+
+  const token = parts[1];
+
+  try {
+    const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+
+    req.user = { userId: decoded.userId };
+    next();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ error: "Token expired" });
+      return;
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ error: "Invalid token" });
+      return;
+    }
+
+    next(error);
+  }
 };

@@ -1,8 +1,8 @@
-import type { Knex } from 'knex';
-import { config } from '../config/env';
+import type { Knex } from "knex";
+import { config } from "../config/env";
 
 const knexConfig: Knex.Config = {
-  client: 'pg',
+  client: "pg",
   connection: {
     host: config.db.host,
     port: config.db.port,
@@ -11,8 +11,8 @@ const knexConfig: Knex.Config = {
     database: config.db.database,
   },
   migrations: {
-    directory: './migrations',
-    extension: 'ts',
+    directory: "./migrations",
+    extension: "ts",
   },
 };
 

@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const loginUser = z.object({
+export const LoginUser = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
@@ -11,6 +11,6 @@ export const RegisterUser = z.object({
   name: z.string().min(1, "Name is required"),
 });
 
-export type loginUser = z.infer<typeof loginUser>;
+export type loginUser = z.infer<typeof LoginUser>;
 
 export type RegisterUser = z.infer<typeof RegisterUser>;
