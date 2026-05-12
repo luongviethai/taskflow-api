@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/env";
 
 interface JwtPayload {
-  userId: number;
+  id: number;
   iat: number;
   exp: number;
 }
@@ -33,7 +33,7 @@ export const authMiddleware = (
   try {
     const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
 
-    req.user = { userId: decoded.userId };
+    req.user = { id: decoded.id };
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
