@@ -3,6 +3,7 @@ import { healthcheckRouter } from "./routes/healthcheck";
 import { experimentRouter } from "./routes/experiment";
 import { authRouter } from "./routes/auth";
 import { wordspacesRouter } from "./routes/workspaces";
+import { projectsRouter } from "./routes/projects";
 import { errorHandler } from "./middlewares/error-handler";
 import { authMiddleware } from "./middlewares/auth";
 
@@ -14,6 +15,7 @@ app.use("/healthcheck", healthcheckRouter);
 app.use("/experiment", experimentRouter);
 app.use("/auth", authRouter);
 app.use("/workspaces", authMiddleware, wordspacesRouter);
+app.use("/projects", authMiddleware, projectsRouter);
 app.use("/protected", authMiddleware, (req, res) => {
   res.json({ message: "Protected route" });
 });
