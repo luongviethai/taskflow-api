@@ -103,4 +103,21 @@ router.get("/:id/tasks", async (req: Request, res: Response) => {
 
 router.patch("/:id/tasks", async (req: Request, res: Response) => {});
 
+router.delete("/tasks/:id", async (req: Request, res: Response) => {
+  try {
+    let taskId: number;
+
+    if (typeof req.params.id === "string") {
+      taskId = parseInt(req.params.id);
+    } else {
+      taskId = parseInt(req.params.id[0]);
+    }
+
+    res.json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("Error listing workspaces:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export { router as projectsRouter };
