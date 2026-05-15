@@ -1,24 +1,34 @@
+/**
+ * src/app.ts
+ *
+ * Tạo Express app, đăng ký middleware và routes.
+ * Tách riêng khỏi index.ts để test có thể import app mà không start server.
+ */
+
 import express from "express";
-import { healthcheckRouter } from "./routes/healthcheck";
-import { experimentRouter } from "./routes/experiment";
-import { authRouter } from "./routes/auth";
-import { wordspacesRouter } from "./routes/workspaces";
-import { projectsRouter } from "./routes/projects";
+import db from "./db";
+import { timingMiddleware } from "./middlewares/timing";
 import { errorHandler } from "./middlewares/error-handler";
-import { authMiddleware } from "./middlewares/auth";
+import { authRoutes } from "./routes/auth.routes";
+import { workspaceRoutes } from "./routes/workspaces.routes";
+import { taskRoutes } from "./routes/task.routes";
 
 const app = express();
 
-app.use(express.json());
+// ── Global middleware (chạy TRƯỚC mọi route) ──────────
 
-app.use("/healthcheck", healthcheckRouter);
-app.use("/experiment", experimentRouter);
-app.use("/auth", authRouter);
-app.use("/workspaces", authMiddleware, wordspacesRouter);
-app.use("/projects", authMiddleware, projectsRouter);
-app.use("/protected", authMiddleware, (req, res) => {
-  res.json({ message: "Protected route" });
-});
+app.use(express.json()); // Parse JSON request body
+app.use(timingMiddleware); // Log response time
+
+// ── Routes ────────────────────────────────────────────
+
+app.use(authRoutes(db)); // POST /auth/register, /auth/login
+app.use(workspaceRoutes(db)); // /workspaces, /workspaces/:id/...
+app.use(taskRoutes(db)); // /projects/:id/tasks, /tasks/:id
+
+// ── Error handler (chạy SAU mọi route) ────────────────
+// Express nhận diện error middleware bằng 4 params
+
 app.use(errorHandler);
 
-export { app };
+export default app;
