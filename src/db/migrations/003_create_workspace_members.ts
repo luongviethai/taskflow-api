@@ -14,8 +14,7 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('workspace_members', (table) => {
     table
-      .integer('workspace_id')
-      .unsigned()
+      .uuid('workspace_id')
       .notNullable()
       .references('id')
       .inTable('workspaces')
@@ -23,9 +22,9 @@ export async function up(knex: Knex): Promise<void> {
     // CASCADE: xóa workspace → tự xóa membership record.
     // Hợp lý vì membership không có ý nghĩa nếu workspace không còn.
 
+
     table
-      .integer('user_id')
-      .unsigned()
+      .uuid('user_id')
       .notNullable()
       .references('id')
       .inTable('users')

@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { Knex } from "knex";
 
 // ============================================================
 // MIGRATION: tasks
@@ -12,38 +12,36 @@ import { Knex } from 'knex';
 // ============================================================
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTable('tasks', (table) => {
-    table.increments('id').primary();
+  await knex.schema.createTable("tasks", (table) => {
+    table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
 
     table
-      .integer('project_id')
-      .unsigned()
+      .uuid("project_id")
       .notNullable()
-      .references('id')
-      .inTable('projects')
-      .onDelete('CASCADE');
+      .references("id")
+      .inTable("projects")
+      .onDelete("CASCADE");
     // CASCADE: xóa project → xóa tất cả task.
 
-    table.string('title', 500).notNullable();
-    table.text('description');
+    table.string("title", 500).notNullable();
+    table.text("description");
 
     // Status: chỉ 3 giá trị hợp lệ
     // Default 'todo': task mới tạo luôn ở trạng thái todo
-    table.string('status', 20).notNullable().defaultTo('todo');
+    table.string("status", 20).notNullable().defaultTo("todo");
 
     // assignee_id: NULLABLE — task có thể chưa assign
     // ON DELETE SET NULL: nếu user bị xóa, task vẫn tồn tại
     // chỉ mất assignee. Hợp lý hơn CASCADE (mất task = mất data).
     table
-      .integer('assignee_id')
-      .unsigned()
+      .uuid("assignee_id")
       .nullable()
-      .references('id')
-      .inTable('users')
-      .onDelete('SET NULL');
+      .references("id")
+      .inTable("users")
+      .onDelete("SET NULL");
 
-    table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
-    table.timestamp('updated_at').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
+    table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
   });
 
   // CHECK constraint cho status — DB reject giá trị ngoài 3 cái này
@@ -56,5 +54,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists('tasks');
+  return knex.schema.dropTableIfExists("tasks");
 }

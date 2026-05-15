@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { Knex } from "knex";
 
 // ============================================================
 // MIGRATION: projects
@@ -8,28 +8,27 @@ import { Knex } from 'knex';
 // ============================================================
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable('projects', (table) => {
-    table.increments('id').primary();
+  return knex.schema.createTable("projects", (table) => {
+    table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
 
     table
-      .integer('workspace_id')
-      .unsigned()
+      .uuid("workspace_id")
       .notNullable()
-      .references('id')
-      .inTable('workspaces')
-      .onDelete('CASCADE');
+      .references("id")
+      .inTable("workspaces")
+      .onDelete("CASCADE");
     // CASCADE: xóa workspace → xóa tất cả project của workspace đó.
     // Project không có ý nghĩa nếu workspace không còn.
 
-    table.string('name', 200).notNullable();
-    table.text('description');
+    table.string("name", 200).notNullable();
+    table.text("description");
     // text: không giới hạn độ dài (khác varchar có limit).
     // Dùng cho field có thể dài: description, content, bio...
 
-    table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists('projects');
+  return knex.schema.dropTableIfExists("projects");
 }

@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { Knex } from "knex";
 
 // ============================================================
 // MIGRATION: workspaces
@@ -8,9 +8,9 @@ import { Knex } from 'knex';
 // ============================================================
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable('workspaces', (table) => {
-    table.increments('id').primary();
-    table.string('name', 100).notNullable();
+  return knex.schema.createTable("workspaces", (table) => {
+    table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
+    table.string("name", 100).notNullable();
 
     // owner_id: ai tạo workspace này
     // ON DELETE RESTRICT: không cho xóa user nếu user đó đang own workspace.
@@ -18,17 +18,16 @@ export async function up(knex: Knex): Promise<void> {
     // → Xóa user → xóa workspace → xóa project → xóa task = MẤT DATA của cả team.
     //   Quá nguy hiểm. Bắt buộc phải transfer ownership trước khi xóa user.
     table
-      .integer('owner_id')
-      .unsigned()
+      .uuid("owner_id")
       .notNullable()
-      .references('id')
-      .inTable('users')
-      .onDelete('RESTRICT');
+      .references("id")
+      .inTable("users")
+      .onDelete("RESTRICT");
 
-    table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists('workspaces');
+  return knex.schema.dropTableIfExists("workspaces");
 }

@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("users", (table) => {
     // id: auto-increment, đơn giản cho giai đoạn này.
     // Tháng sau sẽ cân nhắc UUID nếu cần.
-    table.increments("id").primary();
+    table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
 
     table.string("email", 255).notNullable().unique();
     // UNIQUE constraint: DB sẽ reject nếu insert email trùng.
