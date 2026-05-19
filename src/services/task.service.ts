@@ -17,14 +17,14 @@ interface CreateTaskInput {
   title: string;
   description?: string;
   status?: "todo" | "in_progress" | "done";
-  assignee_id?: number | null;
+  assignee_id?: string | null;
 }
 
 interface UpdateTaskInput {
   title?: string;
   description?: string;
   status?: "todo" | "in_progress" | "done";
-  assignee_id?: number | null;
+  assignee_id?: string | null;
 }
 
 interface ListTasksFilters {
@@ -42,7 +42,7 @@ export class TaskService {
    *
    * Trả project object nếu OK, throw NotFoundError nếu không.
    */
-  private async verifyProjectAccess(projectId: number, userId: number) {
+  private async verifyProjectAccess(projectId: string, userId: string) {
     const project = await this.db("projects").where({ id: projectId }).first();
 
     if (!project) {
@@ -68,7 +68,7 @@ export class TaskService {
    * Verify user có quyền truy cập task.
    * Chain: task → project → workspace → members.
    */
-  private async verifyTaskAccess(taskId: number, userId: number) {
+  private async verifyTaskAccess(taskId: string, userId: string) {
     const task = await this.db("tasks").where({ id: taskId }).first();
 
     if (!task) {
@@ -87,7 +87,7 @@ export class TaskService {
    * Verify user là member của workspace.
    * Dùng khi check assignee.
    */
-  private async verifyWorkspaceMember(workspaceId: number, userId: number) {
+  private async verifyWorkspaceMember(workspaceId: string, userId: string) {
     const membership = await this.db("workspace_members")
       .where({
         workspace_id: workspaceId,
@@ -104,7 +104,7 @@ export class TaskService {
 
   // ── CREATE TASK ─────────────────────────────────────
 
-  async createTask(projectId: number, userId: number, input: CreateTaskInput) {
+  async createTask(projectId: string, userId: string, input: CreateTaskInput) {
     // Check user có access project
     const { project } = await this.verifyProjectAccess(projectId, userId);
 
@@ -130,8 +130,8 @@ export class TaskService {
   // ── LIST TASKS ──────────────────────────────────────
 
   async listTasks(
-    projectId: number,
-    userId: number,
+    projectId: string,
+    userId: string,
     filters: ListTasksFilters,
   ) {
     // Check access
@@ -152,14 +152,14 @@ export class TaskService {
 
   // ── GET TASK BY ID ──────────────────────────────────
 
-  async getTask(taskId: number, userId: number) {
+  async getTask(taskId: string, userId: string) {
     const { task } = await this.verifyTaskAccess(taskId, userId);
     return task;
   }
 
   // ── UPDATE TASK ─────────────────────────────────────
 
-  async updateTask(taskId: number, userId: number, updates: UpdateTaskInput) {
+  async updateTask(taskId: string, userId: string, updates: UpdateTaskInput) {
     const { task, project } = await this.verifyTaskAccess(taskId, userId);
 
     // Check assignee nếu đổi
@@ -180,14 +180,14 @@ export class TaskService {
 
   // ── DELETE TASK ─────────────────────────────────────
 
-  async deleteTask(taskId: number, userId: number): Promise<void> {
+  async deleteTask(taskId: string, userId: string): Promise<void> {
     await this.verifyTaskAccess(taskId, userId);
     await this.db("tasks").where({ id: taskId }).del();
   }
 
   // ── ASSIGN TASK ─────────────────────────────────────
 
-  async assignTask(taskId: number, userId: number, assigneeId: number) {
+  async assignTask(taskId: string, userId: string, assigneeId: string) {
     const { project } = await this.verifyTaskAccess(taskId, userId);
 
     // Check assignee là member

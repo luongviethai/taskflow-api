@@ -39,11 +39,11 @@ export class WorkspaceController {
   // GET /workspaces/:id
   getWorkspace = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let workspaceId: number;
+      let workspaceId: string;
       if (typeof req.params.id === "string") {
-        workspaceId = parseInt(req.params.id);
+        workspaceId = req.params.id;
       } else {
-        workspaceId = parseInt(req.params.id[0]);
+        workspaceId = req.params.id[0];
       }
       const userId = req.user!.id;
       const workspace = await this.workspaceService.getWorkspace(
@@ -59,11 +59,11 @@ export class WorkspaceController {
   // POST /workspaces/:id/members
   addMember = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let workspaceId: number;
+      let workspaceId: string;
       if (typeof req.params.id === "string") {
-        workspaceId = parseInt(req.params.id);
+        workspaceId = req.params.id;
       } else {
-        workspaceId = parseInt(req.params.id[0]);
+        workspaceId = req.params.id[0];
       }
       const userId = req.user!.id;
       const result = await this.workspaceService.addMember(
@@ -83,11 +83,11 @@ export class WorkspaceController {
   // POST /workspaces/:id/projects
   createProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let workspaceId: number;
+      let workspaceId: string;
       if (typeof req.params.id === "string") {
-        workspaceId = parseInt(req.params.id);
+        workspaceId = req.params.id;
       } else {
-        workspaceId = parseInt(req.params.id[0]);
+        workspaceId = req.params.id[0];
       }
       const userId = req.user!.id;
       const project = await this.workspaceService.createProject(
@@ -104,11 +104,11 @@ export class WorkspaceController {
   // GET /workspaces/:id/projects
   listProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let workspaceId: number;
+      let workspaceId: string;
       if (typeof req.params.id === "string") {
-        workspaceId = parseInt(req.params.id);
+        workspaceId = req.params.id;
       } else {
-        workspaceId = parseInt(req.params.id[0]);
+        workspaceId = req.params.id[0];
       }
       const userId = req.user!.id;
       const projects = await this.workspaceService.listProjects(

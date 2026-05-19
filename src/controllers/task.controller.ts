@@ -14,12 +14,12 @@ export class TaskController {
   // POST /projects/:id/tasks
   createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let projectId: number;
+      let projectId: string;
 
       if (typeof req.params.id === "string") {
-        projectId = parseInt(req.params.id);
+        projectId = req.params.id;
       } else {
-        projectId = parseInt(req.params.id[0]);
+        projectId = req.params.id[0];
       }
       const userId = req.user!.id;
       const task = await this.taskService.createTask(
@@ -36,12 +36,12 @@ export class TaskController {
   // GET /projects/:id/tasks
   listTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let projectId: number;
+      let projectId: string;
 
       if (typeof req.params.id === "string") {
-        projectId = parseInt(req.params.id);
+        projectId = req.params.id;
       } else {
-        projectId = parseInt(req.params.id[0]);
+        projectId = req.params.id[0];
       }
       const userId = req.user!.id;
       const { status } = req.query as { status?: string };
@@ -57,11 +57,11 @@ export class TaskController {
   // GET /tasks/:id
   getTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let taskId: number;
+      let taskId: string;
       if (typeof req.params.id === "string") {
-        taskId = parseInt(req.params.id);
+        taskId = req.params.id;
       } else {
-        taskId = parseInt(req.params.id[0]);
+        taskId = req.params.id[0];
       }
       const userId = req.user!.id;
       const task = await this.taskService.getTask(taskId, userId);
@@ -74,11 +74,11 @@ export class TaskController {
   // PATCH /tasks/:id
   updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let taskId: number;
+      let taskId: string;
       if (typeof req.params.id === "string") {
-        taskId = parseInt(req.params.id);
+        taskId = req.params.id;
       } else {
-        taskId = parseInt(req.params.id[0]);
+        taskId = req.params.id[0];
       }
       const userId = req.user!.id;
       const task = await this.taskService.updateTask(taskId, userId, req.body);
@@ -91,11 +91,11 @@ export class TaskController {
   // DELETE /tasks/:id
   deleteTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let taskId: number;
+      let taskId: string;
       if (typeof req.params.id === "string") {
-        taskId = parseInt(req.params.id);
+        taskId = req.params.id;
       } else {
-        taskId = parseInt(req.params.id[0]);
+        taskId = req.params.id[0];
       }
       const userId = req.user!.id;
       await this.taskService.deleteTask(taskId, userId);
@@ -108,11 +108,11 @@ export class TaskController {
   // PATCH /tasks/:id/assign
   assignTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let taskId: number;
+      let taskId: string;
       if (typeof req.params.id === "string") {
-        taskId = parseInt(req.params.id);
+        taskId = req.params.id;
       } else {
-        taskId = parseInt(req.params.id[0]);
+        taskId = req.params.id[0];
       }
       const userId = req.user!.id;
       const { assignee_id } = req.body;

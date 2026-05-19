@@ -20,7 +20,7 @@ interface CreateWorkspaceInput {
 }
 
 interface AddMemberInput {
-  user_id: number;
+  user_id: string;
   role: "member" | "viewer";
 }
 
@@ -41,7 +41,7 @@ export class WorkspaceService {
    * Trả 404 (không phải 403) nếu không phải member:
    * → không lộ thông tin workspace tồn tại cho người ngoài.
    */
-  async verifyMembership(workspaceId: number, userId: number) {
+  async verifyMembership(workspaceId: string, userId: string) {
     const membership = await this.db("workspace_members")
       .where({ workspace_id: workspaceId, user_id: userId })
       .first();
@@ -57,7 +57,7 @@ export class WorkspaceService {
    * Kiểm tra workspace tồn tại. Dùng cho internal check
    * (khi đã biết user có quyền, chỉ cần check existence).
    */
-  private async findWorkspaceOrFail(workspaceId: number) {
+  private async findWorkspaceOrFail(workspaceId: string) {
     const workspace = await this.db("workspaces")
       .where({ id: workspaceId })
       .first();
@@ -71,7 +71,7 @@ export class WorkspaceService {
 
   // ── CREATE WORKSPACE ────────────────────────────────
 
-  async createWorkspace(userId: number, input: CreateWorkspaceInput) {
+  async createWorkspace(userId: string, input: CreateWorkspaceInput) {
     // Transaction: tạo workspace + thêm owner phải cùng thành công
     const workspace = await this.db.transaction(async (trx) => {
       const [newWorkspace] = await trx("workspaces")
@@ -96,7 +96,7 @@ export class WorkspaceService {
 
   // ── LIST WORKSPACES ─────────────────────────────────
 
-  async listWorkspaces(userId: number) {
+  async listWorkspaces(userId: string) {
     const workspaces = await this.db("workspaces")
       .join(
         "workspace_members",
@@ -111,7 +111,7 @@ export class WorkspaceService {
 
   // ── GET WORKSPACE BY ID ─────────────────────────────
 
-  async getWorkspace(workspaceId: number, userId: number) {
+  async getWorkspace(workspaceId: string, userId: string) {
     const membership = await this.verifyMembership(workspaceId, userId);
 
     const workspace = await this.db("workspaces")
@@ -124,8 +124,8 @@ export class WorkspaceService {
   // ── ADD MEMBER ──────────────────────────────────────
 
   async addMember(
-    workspaceId: number,
-    currentUserId: number,
+    workspaceId: string,
+    currentUserId: string,
     input: AddMemberInput,
   ) {
     // Check 1: Workspace tồn tại?
@@ -175,8 +175,8 @@ export class WorkspaceService {
   // ── CREATE PROJECT ──────────────────────────────────
 
   async createProject(
-    workspaceId: number,
-    userId: number,
+    workspaceId: string,
+    userId: string,
     input: CreateProjectInput,
   ) {
     // Check membership — bất kỳ role nào đều được tạo project
@@ -196,7 +196,7 @@ export class WorkspaceService {
 
   // ── LIST PROJECTS ───────────────────────────────────
 
-  async listProjects(workspaceId: number, userId: number) {
+  async listProjects(workspaceId: string, userId: string) {
     // Check membership
     await this.verifyMembership(workspaceId, userId);
 

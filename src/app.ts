@@ -13,6 +13,7 @@ import { errorHandler } from "./middlewares/error-handler";
 import { authRoutes } from "./routes/auth.routes";
 import { workspaceRoutes } from "./routes/workspaces.routes";
 import { taskRoutes } from "./routes/task.routes";
+import { commentRoutes } from "./routes/comment.routes";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(queryCounterMiddleware); // Log response time
 app.use(authRoutes(db)); // POST /auth/register, /auth/login
 app.use(workspaceRoutes(db)); // /workspaces, /workspaces/:id/...
 app.use(taskRoutes(db)); // /projects/:id/tasks, /tasks/:id
+app.use(commentRoutes(db));
 
 // ── Error handler (chạy SAU mọi route) ────────────────
 // Express nhận diện error middleware bằng 4 params
