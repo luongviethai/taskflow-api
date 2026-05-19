@@ -5,19 +5,19 @@
  * CHỈ khai báo: path, middleware, controller method.
  */
 
-import { Router } from 'express';
-import { Knex } from 'knex';
-import { authMiddleware } from '../middlewares/auth';
-import { validate } from '../validators/validate';
+import { Router } from "express";
+import { Knex } from "knex";
+import { authMiddleware } from "../middlewares/auth";
+import { validate } from "../validators/validate";
 import {
   createTaskSchema,
   updateTaskSchema,
   listTasksQuerySchema,
   assignTaskSchema,
   taskParamsSchema,
-} from '../validators/task.validator';
-import { TaskService } from '../services/task.service';
-import { TaskController } from '../controllers/task.controller';
+} from "../validators/task.validator";
+import { TaskService } from "../services/task.service";
+import { TaskController } from "../controllers/task.controller";
 
 export function taskRoutes(db: Knex): Router {
   const router = Router();
@@ -30,46 +30,53 @@ export function taskRoutes(db: Knex): Router {
 
   // Nested under project (tạo + list cần context project)
   router.post(
-    '/projects/:id/tasks',
+    "/projects/:id/tasks",
     authMiddleware,
     validate(createTaskSchema),
-    controller.createTask
+    controller.createTask,
   );
 
   router.get(
-    '/projects/:id/tasks',
+    "/projects/:id/tasks",
     authMiddleware,
     validate(listTasksQuerySchema),
-    controller.listTasks
+    controller.listTasks,
   );
 
   // Flat (thao tác trực tiếp trên task, không cần project context)
   router.get(
-    '/tasks/:id',
+    "/tasks/:id",
     authMiddleware,
     validate(taskParamsSchema),
-    controller.getTask
+    controller.getTask,
   );
 
   router.patch(
-    '/tasks/:id',
+    "/tasks/:id",
     authMiddleware,
     validate(updateTaskSchema),
-    controller.updateTask
+    controller.updateTask,
   );
 
   router.delete(
-    '/tasks/:id',
+    "/tasks/:id",
     authMiddleware,
     validate(taskParamsSchema),
-    controller.deleteTask
+    controller.deleteTask,
   );
 
   router.patch(
-    '/tasks/:id/assign',
+    "/tasks/:id/assign",
     authMiddleware,
     validate(assignTaskSchema),
-    controller.assignTask
+    controller.assignTask,
+  );
+
+  // tasks details
+  router.get(
+    "/projects/:id/tasks-destail",
+    authMiddleware,
+    controller.getTaskDetails,
   );
 
   return router;

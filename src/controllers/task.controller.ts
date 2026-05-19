@@ -126,4 +126,20 @@ export class TaskController {
       next(error);
     }
   };
+
+  // GET /projects/:id/tasks-destail
+  getTaskDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let projectId: string;
+      if (typeof req.params.id === "string") {
+        projectId = req.params.id;
+      } else {
+        projectId = req.params.id[0];
+      }
+      const taskDetails = await this.taskService.getTaskDetails(projectId);
+      res.json(taskDetails);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

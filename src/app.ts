@@ -8,6 +8,7 @@
 import express from "express";
 import db from "./db";
 import { timingMiddleware } from "./middlewares/timing";
+import { queryCounterMiddleware } from "./middlewares/query-counter";
 import { errorHandler } from "./middlewares/error-handler";
 import { authRoutes } from "./routes/auth.routes";
 import { workspaceRoutes } from "./routes/workspaces.routes";
@@ -19,6 +20,7 @@ const app = express();
 
 app.use(express.json()); // Parse JSON request body
 app.use(timingMiddleware); // Log response time
+app.use(queryCounterMiddleware); // Log response time
 
 // ── Routes ────────────────────────────────────────────
 

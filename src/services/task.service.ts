@@ -200,4 +200,39 @@ export class TaskService {
 
     return updatedTask;
   }
+
+  //
+
+  async getTaskDetails(projectId: string) {
+    const tasks = await this.db("tasks")
+      .select(
+        "tasks.*",
+        "users.name as assignee_name",
+        "users.email as assignee_email",
+      )
+      .leftJoin("users", "users.id", "tasks.assignee_id")
+      .where("tasks.project_id", projectId)
+      .orderBy("tasks.created_at", "desc")
+      .limit(50);
+
+    const taskIds = tasks.map((t) => t.id);
+    const comments = await this.db("comments")
+      .whereIn("task_id", taskIds)
+      .orderBy("created_at", "desc");
+
+    const commentMap = new Map<string, any[]>();
+    for (const c of comments) {
+      if (!commentMap.has(c.task_id)) commentMap.set(c.task_id, []);
+      const arr = commentMap.get(c.task_id)!;
+      if (arr.length < 5) arr.push(c); // chỉ giữ 5 comment mới nhất
+    }
+
+    return tasks.map((task) => ({
+      ...task,
+      assignee: task.assignee_name
+        ? { name: task.assignee_name, email: task.assignee_email }
+        : null,
+      comments: commentMap.get(task.id) || [],
+    }));
+  }
 }
