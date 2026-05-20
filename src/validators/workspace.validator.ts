@@ -16,16 +16,16 @@ export const createWorkspaceSchema = z.object({
 
 export const workspaceParamsSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid workspace ID'),
+    id: z.uuid('Invalid workspace ID'),
   }),
 });
 
 export const addMemberSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid workspace ID'),
+    id: z.uuid('Invalid workspace ID'),
   }),
   body: z.object({
-    user_id: z.number().int().positive('Invalid user ID'),
+    user_id: z.uuid('Invalid user ID'),
     role: z.enum(['member', 'viewer'], {
       error: 'Role must be "member" or "viewer"',
     }),
@@ -34,7 +34,7 @@ export const addMemberSchema = z.object({
 
 export const createProjectSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid workspace ID'),
+    id: z.uuid('Invalid workspace ID'),
   }),
   body: z.object({
     name: z

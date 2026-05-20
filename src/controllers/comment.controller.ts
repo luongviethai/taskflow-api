@@ -20,4 +20,25 @@ export class CommentController {
       next(error);
     }
   };
+
+  listComments = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const taskId = getParamsId(req.params.id);
+      const comments = await this.commentService.listComments(taskId);
+      res.status(200).json(comments);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteComment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const commentId = getParamsId(req.params.id);
+      const userId = req.user!.id;
+      await this.commentService.deleteComment(commentId, userId);
+      res.status(204).json({ message: "Comment deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -8,7 +8,7 @@ export const taskStatusEnum = z.enum(['todo', 'in_progress', 'done']);
 
 export const createTaskSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid project ID'),
+    id: z.uuid('Invalid project ID'),
   }),
   body: z.object({
     title: z
@@ -22,20 +22,20 @@ export const createTaskSchema = z.object({
       .optional()
       .default(''),
     status: taskStatusEnum.optional().default('todo'),
-    assignee_id: z.number().int().positive().optional().nullable(),
+    assignee_id: z.uuid('Invalid assignee ID').optional().nullable(),
   }),
 });
 
 export const updateTaskSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid task ID'),
+    id: z.uuid('Invalid task ID'),
   }),
   body: z
     .object({
       title: z.string().min(1).max(500).trim().optional(),
       description: z.string().max(5000).optional(),
       status: taskStatusEnum.optional(),
-      assignee_id: z.number().int().positive().nullable().optional(),
+      assignee_id: z.uuid('Invalid assignee ID').nullable().optional(),
     })
     .refine((data) => Object.keys(data).length > 0, {
       message: 'At least one field must be provided for update',
@@ -44,7 +44,7 @@ export const updateTaskSchema = z.object({
 
 export const listTasksQuerySchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid project ID'),
+    id: z.uuid('Invalid project ID'),
   }),
   query: z.object({
     status: taskStatusEnum.optional(),
@@ -53,15 +53,15 @@ export const listTasksQuerySchema = z.object({
 
 export const assignTaskSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid task ID'),
+    id: z.uuid('Invalid task ID'),
   }),
   body: z.object({
-    assignee_id: z.number().int().positive('Invalid assignee ID'),
+    assignee_id: z.uuid('Invalid assignee ID'),
   }),
 });
 
 export const taskParamsSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'Invalid task ID'),
+    id: z.uuid('Invalid task ID'),
   }),
 });
